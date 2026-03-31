@@ -53,6 +53,9 @@ export function CardListPage() {
             >
               <div className="flex items-center gap-3">
                 {card.type === 'word' && genderBadge(card.gender)}
+                {card.type === 'verb' && (
+                  <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">verb</span>
+                )}
                 <div>
                   <span className="font-medium text-gray-900">{card.german}</span>
                   <span className="text-gray-400 mx-2">&mdash;</span>

@@ -2,6 +2,7 @@ import { NavLink } from 'react-router';
 
 const links = [
   { to: '/', label: 'Practice' },
+  { to: '/conjugate', label: 'Conjugate' },
   { to: '/cards', label: 'All Cards' },
 ];
 

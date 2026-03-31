@@ -3,6 +3,7 @@ import { CardProvider } from './context/CardContext';
 import { Layout } from './components/layout/Layout';
 import { PracticePage } from './pages/PracticePage';
 import { CardListPage } from './pages/CardListPage';
+import { ConjugatePage } from './pages/ConjugatePage';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<PracticePage />} />
+            <Route path="conjugate" element={<ConjugatePage />} />
             <Route path="cards" element={<CardListPage />} />
           </Route>
         </Routes>
