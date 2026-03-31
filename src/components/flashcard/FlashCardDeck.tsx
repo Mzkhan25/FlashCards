@@ -20,38 +20,45 @@ export function FlashCardDeck() {
   const [filter, setFilter] = useState<Filter>('all');
   const [localIndex, setLocalIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [filteredCards, setFilteredCards] = useState<FlashCardType[]>(() => cards);
+  const [orderedIds, setOrderedIds] = useState<string[]>(() => cards.map((c) => c.id));
 
-  const derived = useMemo(() => {
-    switch (filter) {
-      case 'words': return cards.filter((c) => c.type === 'word');
-      case 'verbs': return cards.filter((c) => c.type === 'verb');
-      default: return cards;
-    }
-  }, [cards, filter]);
+  // Map of id → card for O(1) lookups
+  const cardMap = useMemo(() => {
+    const map = new Map<string, FlashCardType>();
+    for (const c of cards) map.set(c.id, c);
+    return map;
+  }, [cards]);
 
-  // Sync filtered cards from derived, but only reset index/flip when filter changes
+  // IDs that match the current filter
+  const filteredIds = useMemo(() => {
+    const matches = new Set(
+      cards
+        .filter((c) => filter === 'all' || (filter === 'words' ? c.type === 'word' : c.type === 'verb'))
+        .map((c) => c.id),
+    );
+    // Preserve current order, only keep IDs that match the filter
+    return orderedIds.filter((id) => matches.has(id));
+  }, [cards, filter, orderedIds]);
+
+  // Reset order when filter changes
   useEffect(() => {
-    setFilteredCards(derived);
-  }, [derived]);
-
-  useEffect(() => {
+    setOrderedIds(cards.map((c) => c.id));
     setLocalIndex(0);
     setIsFlipped(false);
   }, [filter]);
 
-  const filteredCardsRef = useRef(filteredCards);
-  filteredCardsRef.current = filteredCards;
+  const filteredIdsRef = useRef(filteredIds);
+  filteredIdsRef.current = filteredIds;
 
   const next = useCallback(() => {
-    const len = filteredCardsRef.current.length;
+    const len = filteredIdsRef.current.length;
     if (len === 0) return;
     setLocalIndex((i) => (i + 1) % len);
     setIsFlipped(false);
   }, []);
 
   const prev = useCallback(() => {
-    const len = filteredCardsRef.current.length;
+    const len = filteredIdsRef.current.length;
     if (len === 0) return;
     setLocalIndex((i) => (i - 1 + len) % len);
     setIsFlipped(false);
@@ -62,7 +69,7 @@ export function FlashCardDeck() {
   }, []);
 
   const doShuffle = useCallback(() => {
-    setFilteredCards((prev) => shuffle(prev));
+    setOrderedIds((prev) => shuffle(prev));
     setLocalIndex(0);
     setIsFlipped(false);
   }, []);
@@ -105,7 +112,8 @@ export function FlashCardDeck() {
     );
   }
 
-  const currentCard = filteredCards[localIndex];
+  const currentId = filteredIds[localIndex];
+  const currentCard = currentId ? cardMap.get(currentId) : undefined;
   if (!currentCard) return null;
 
   return (
@@ -147,7 +155,7 @@ export function FlashCardDeck() {
         }}
       />
 
-      <FlashCardProgress current={localIndex + 1} total={filteredCards.length} />
+      <FlashCardProgress current={localIndex + 1} total={filteredIds.length} />
 
       <div className="flex gap-3">
         <button
