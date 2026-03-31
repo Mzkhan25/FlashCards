@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@layer components {
+  .card-container {
+    perspective: 1000px;
+  }
+  .card-inner {
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+  .card-inner.flipped {
+    transform: rotateY(180deg);
+  }
+  .card-front,
+  .card-back {
+    backface-visibility: hidden;
+    position: absolute;
+    inset: 0;
+  }
+  .card-back {
+    transform: rotateY(180deg);
+  }
+}
