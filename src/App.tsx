@@ -4,6 +4,8 @@ import { Layout } from './components/layout/Layout';
 import { PracticePage } from './pages/PracticePage';
 import { CardListPage } from './pages/CardListPage';
 import { ConjugatePage } from './pages/ConjugatePage';
+import { TypeQuizPage } from './pages/TypeQuizPage';
+import { SettingsPage } from './pages/SettingsPage';
 
 function App() {
   return (
@@ -13,7 +15,9 @@ function App() {
           <Route element={<Layout />}>
             <Route index element={<PracticePage />} />
             <Route path="conjugate" element={<ConjugatePage />} />
+            <Route path="type-quiz" element={<TypeQuizPage />} />
             <Route path="cards" element={<CardListPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Routes>
       </HashRouter>

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useCards } from '../hooks/useCards';
-import type { VerbCard } from '../types';
+import { RatingButtons } from '../components/flashcard/RatingButtons';
+import { SessionStatsBar } from '../components/stats/SessionStatsBar';
+import type { VerbCard, Rating } from '../types';
 
 const PRONOUNS: { key: keyof NonNullable<VerbCard['conjugations']>; label: string }[] = [
   { key: 'ich', label: 'ich' },
@@ -16,23 +18,33 @@ function pickRandom<T>(arr: T[]): T {
 }
 
 export function ConjugatePage() {
-  const { state } = useCards();
+  const { state, dispatch } = useCards();
   const verbs = state.cards.filter((c): c is VerbCard => c.type === 'verb' && !!c.conjugations);
 
   const [currentVerb, setCurrentVerb] = useState<VerbCard | null>(null);
   const [currentPronoun, setCurrentPronoun] = useState(PRONOUNS[0]);
   const [revealed, setRevealed] = useState(false);
+  const [tense, setTense] = useState<'present' | 'perfekt'>('present');
+
+  const verbsWithPerfekt = verbs.filter((v) => !!v.perfekt);
 
   const pickNew = useCallback(() => {
-    if (verbs.length === 0) return;
-    setCurrentVerb(pickRandom(verbs));
+    const pool = tense === 'perfekt' ? verbsWithPerfekt : verbs;
+    if (pool.length === 0) return;
+    setCurrentVerb(pickRandom(pool));
     setCurrentPronoun(pickRandom(PRONOUNS));
     setRevealed(false);
-  }, [verbs.length]);
+  }, [verbs.length, verbsWithPerfekt.length, tense]);
 
   useEffect(() => {
     pickNew();
   }, []);
+
+  const handleRate = useCallback((rating: Rating) => {
+    if (!currentVerb) return;
+    dispatch({ type: 'RECORD_RESULT', payload: { cardId: currentVerb.id, rating } });
+    setTimeout(() => pickNew(), 300);
+  }, [currentVerb, dispatch, pickNew]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -41,11 +53,7 @@ export function ConjugatePage() {
 
       if (e.key === ' ') {
         e.preventDefault();
-        if (revealed) {
-          pickNew();
-        } else {
-          setRevealed(true);
-        }
+        if (!revealed) setRevealed(true);
       } else if (e.key === 'ArrowRight') {
         pickNew();
       }
@@ -72,17 +80,38 @@ export function ConjugatePage() {
 
   if (!currentVerb) return null;
 
-  const answer = currentVerb.conjugations![currentPronoun.key];
+  const conj = tense === 'perfekt' && currentVerb.perfekt ? currentVerb.perfekt : currentVerb.conjugations!;
+  const answer = conj[currentPronoun.key];
 
   return (
     <div className="py-6 px-4 md:py-8 flex flex-col items-center gap-6">
       <h2 className="text-2xl font-display text-text-primary">Conjugation Quiz</h2>
+      <SessionStatsBar />
+
+      {/* Tense toggle */}
+      <div className="flex gap-1 bg-surface-elevated p-1 rounded-xl">
+        <button
+          onClick={() => { setTense('present'); pickNew(); }}
+          className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            tense === 'present' ? 'bg-surface-card text-primary shadow-sm' : 'text-text-secondary'
+          }`}
+        >
+          Präsens
+        </button>
+        <button
+          onClick={() => { setTense('perfekt'); pickNew(); }}
+          className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+            tense === 'perfekt' ? 'bg-surface-card text-primary shadow-sm' : 'text-text-secondary'
+          }`}
+        >
+          Perfekt
+        </button>
+      </div>
 
       <div
         className="w-full max-w-md cursor-pointer"
         onClick={() => {
-          if (revealed) pickNew();
-          else setRevealed(true);
+          if (!revealed) setRevealed(true);
         }}
       >
         <div className="rounded-2xl bg-surface-card shadow-[0_2px_24px_-4px_rgba(0,0,0,0.08)] border border-border border-t-[3px] border-t-amber-500 p-8 text-center">
@@ -103,21 +132,25 @@ export function ConjugatePage() {
             </p>
           </div>
 
-          <p className="text-xs text-text-muted mt-4">
-            {revealed ? 'Tap or Space for next' : 'Tap or Space to reveal'}
-          </p>
+          {!revealed && (
+            <p className="text-xs text-text-muted mt-4">Tap or Space to reveal</p>
+          )}
         </div>
       </div>
 
-      <button
-        onClick={pickNew}
-        className="px-5 py-2.5 rounded-xl bg-surface-card border border-border text-text-primary hover:bg-surface-elevated active:scale-95 transition-all shadow-sm font-medium text-sm"
-      >
-        Next verb &rarr;
-      </button>
+      {revealed && <RatingButtons onRate={handleRate} />}
+
+      {!revealed && (
+        <button
+          onClick={pickNew}
+          className="px-5 py-2.5 rounded-xl bg-surface-card border border-border text-text-primary hover:bg-surface-elevated active:scale-95 transition-all shadow-sm font-medium text-sm"
+        >
+          Skip &rarr;
+        </button>
+      )}
 
       <p className="text-xs text-text-muted">
-        Space to reveal/next &middot; Arrow right for next
+        Space to reveal &middot; Arrow right to skip
       </p>
     </div>
   );

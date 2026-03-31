@@ -1,4 +1,4 @@
-import type { WordCard, VerbCard, FlashCard } from '../types';
+import type { WordCard, VerbCard, PhraseCard, FlashCard, Conjugation } from '../types';
 
 const T = '2024-01-01T00:00:00Z';
 
@@ -7,15 +7,26 @@ function verb(
   id: string,
   german: string,
   english: string,
-  conj: { ich: string; du: string; er_sie_es: string; wir: string; ihr: string; sie_Sie: string },
+  conj: Conjugation,
   tags: string[] = ['verb', 'A1'],
   isRegular = true,
+  perfekt?: Conjugation,
 ): VerbCard {
   return {
     id, type: 'verb', german, english, tags,
-    conjugations: conj, tense: 'present', isRegular,
+    conjugations: conj, perfekt, tense: 'present', isRegular,
     createdAt: T, lastReviewedAt: null, reviewCount: 0,
   };
+}
+
+// Helper for Perfekt with haben
+function ph(pp: string): Conjugation {
+  return { ich: `habe ${pp}`, du: `hast ${pp}`, er_sie_es: `hat ${pp}`, wir: `haben ${pp}`, ihr: `habt ${pp}`, sie_Sie: `haben ${pp}` };
+}
+
+// Helper for Perfekt with sein
+function ps(pp: string): Conjugation {
+  return { ich: `bin ${pp}`, du: `bist ${pp}`, er_sie_es: `ist ${pp}`, wir: `sind ${pp}`, ihr: `seid ${pp}`, sie_Sie: `sind ${pp}` };
 }
 
 const WORD_CARDS: WordCard[] = [
@@ -66,64 +77,64 @@ const WORD_CARDS: WordCard[] = [
 
 const VERB_CARDS: VerbCard[] = [
   // Basics & Essentials
-  verb('v-01', 'sein', 'To be', { ich: 'bin', du: 'bist', er_sie_es: 'ist', wir: 'sind', ihr: 'seid', sie_Sie: 'sind' }, ['verb', 'A1'], false),
-  verb('v-02', 'haben', 'To have', { ich: 'habe', du: 'hast', er_sie_es: 'hat', wir: 'haben', ihr: 'habt', sie_Sie: 'haben' }, ['verb', 'A1'], false),
-  verb('v-03', 'heißen', 'To be called', { ich: 'heiße', du: 'heißt', er_sie_es: 'heißt', wir: 'heißen', ihr: 'heißt', sie_Sie: 'heißen' }),
-  verb('v-04', 'essen', 'To eat', { ich: 'esse', du: 'isst', er_sie_es: 'isst', wir: 'essen', ihr: 'esst', sie_Sie: 'essen' }, ['verb', 'A1'], false),
-  verb('v-05', 'kommen', 'To come', { ich: 'komme', du: 'kommst', er_sie_es: 'kommt', wir: 'kommen', ihr: 'kommt', sie_Sie: 'kommen' }),
-  verb('v-06', 'wohnen', 'To live (reside)', { ich: 'wohne', du: 'wohnst', er_sie_es: 'wohnt', wir: 'wohnen', ihr: 'wohnt', sie_Sie: 'wohnen' }),
-  verb('v-07', 'gehen', 'To go / To walk', { ich: 'gehe', du: 'gehst', er_sie_es: 'geht', wir: 'gehen', ihr: 'geht', sie_Sie: 'gehen' }),
-  verb('v-08', 'trinken', 'To drink', { ich: 'trinke', du: 'trinkst', er_sie_es: 'trinkt', wir: 'trinken', ihr: 'trinkt', sie_Sie: 'trinken' }),
-  verb('v-09', 'lernen', 'To learn', { ich: 'lerne', du: 'lernst', er_sie_es: 'lernt', wir: 'lernen', ihr: 'lernt', sie_Sie: 'lernen' }),
-  verb('v-10', 'studieren', 'To study', { ich: 'studiere', du: 'studierst', er_sie_es: 'studiert', wir: 'studieren', ihr: 'studiert', sie_Sie: 'studieren' }),
-  verb('v-11', 'schlafen', 'To sleep', { ich: 'schlafe', du: 'schläfst', er_sie_es: 'schläft', wir: 'schlafen', ihr: 'schlaft', sie_Sie: 'schlafen' }, ['verb', 'A1'], false),
-  verb('v-12', 'leben', 'To live (be alive)', { ich: 'lebe', du: 'lebst', er_sie_es: 'lebt', wir: 'leben', ihr: 'lebt', sie_Sie: 'leben' }),
+  verb('v-01', 'sein', 'To be', { ich: 'bin', du: 'bist', er_sie_es: 'ist', wir: 'sind', ihr: 'seid', sie_Sie: 'sind' }, ['verb', 'A1'], false, ps('gewesen')),
+  verb('v-02', 'haben', 'To have', { ich: 'habe', du: 'hast', er_sie_es: 'hat', wir: 'haben', ihr: 'habt', sie_Sie: 'haben' }, ['verb', 'A1'], false, ph('gehabt')),
+  verb('v-03', 'heißen', 'To be called', { ich: 'heiße', du: 'heißt', er_sie_es: 'heißt', wir: 'heißen', ihr: 'heißt', sie_Sie: 'heißen' }, ['verb', 'A1'], true, ph('geheißen')),
+  verb('v-04', 'essen', 'To eat', { ich: 'esse', du: 'isst', er_sie_es: 'isst', wir: 'essen', ihr: 'esst', sie_Sie: 'essen' }, ['verb', 'A1'], false, ph('gegessen')),
+  verb('v-05', 'kommen', 'To come', { ich: 'komme', du: 'kommst', er_sie_es: 'kommt', wir: 'kommen', ihr: 'kommt', sie_Sie: 'kommen' }, ['verb', 'A1'], true, ps('gekommen')),
+  verb('v-06', 'wohnen', 'To live (reside)', { ich: 'wohne', du: 'wohnst', er_sie_es: 'wohnt', wir: 'wohnen', ihr: 'wohnt', sie_Sie: 'wohnen' }, ['verb', 'A1'], true, ph('gewohnt')),
+  verb('v-07', 'gehen', 'To go / To walk', { ich: 'gehe', du: 'gehst', er_sie_es: 'geht', wir: 'gehen', ihr: 'geht', sie_Sie: 'gehen' }, ['verb', 'A1'], true, ps('gegangen')),
+  verb('v-08', 'trinken', 'To drink', { ich: 'trinke', du: 'trinkst', er_sie_es: 'trinkt', wir: 'trinken', ihr: 'trinkt', sie_Sie: 'trinken' }, ['verb', 'A1'], true, ph('getrunken')),
+  verb('v-09', 'lernen', 'To learn', { ich: 'lerne', du: 'lernst', er_sie_es: 'lernt', wir: 'lernen', ihr: 'lernt', sie_Sie: 'lernen' }, ['verb', 'A1'], true, ph('gelernt')),
+  verb('v-10', 'studieren', 'To study', { ich: 'studiere', du: 'studierst', er_sie_es: 'studiert', wir: 'studieren', ihr: 'studiert', sie_Sie: 'studieren' }, ['verb', 'A1'], true, ph('studiert')),
+  verb('v-11', 'schlafen', 'To sleep', { ich: 'schlafe', du: 'schläfst', er_sie_es: 'schläft', wir: 'schlafen', ihr: 'schlaft', sie_Sie: 'schlafen' }, ['verb', 'A1'], false, ph('geschlafen')),
+  verb('v-12', 'leben', 'To live (be alive)', { ich: 'lebe', du: 'lebst', er_sie_es: 'lebt', wir: 'leben', ihr: 'lebt', sie_Sie: 'leben' }, ['verb', 'A1'], true, ph('gelebt')),
 
   // Communication & Thinking
-  verb('v-13', 'hören', 'To hear', { ich: 'höre', du: 'hörst', er_sie_es: 'hört', wir: 'hören', ihr: 'hört', sie_Sie: 'hören' }),
-  verb('v-14', 'lesen', 'To read', { ich: 'lese', du: 'liest', er_sie_es: 'liest', wir: 'lesen', ihr: 'lest', sie_Sie: 'lesen' }, ['verb', 'A1'], false),
-  verb('v-15', 'schreiben', 'To write', { ich: 'schreibe', du: 'schreibst', er_sie_es: 'schreibt', wir: 'schreiben', ihr: 'schreibt', sie_Sie: 'schreiben' }),
-  verb('v-16', 'sprechen', 'To speak', { ich: 'spreche', du: 'sprichst', er_sie_es: 'spricht', wir: 'sprechen', ihr: 'sprecht', sie_Sie: 'sprechen' }, ['verb', 'A1'], false),
-  verb('v-17', 'sagen', 'To say', { ich: 'sage', du: 'sagst', er_sie_es: 'sagt', wir: 'sagen', ihr: 'sagt', sie_Sie: 'sagen' }),
-  verb('v-18', 'fragen', 'To ask', { ich: 'frage', du: 'fragst', er_sie_es: 'fragt', wir: 'fragen', ihr: 'fragt', sie_Sie: 'fragen' }),
-  verb('v-19', 'antworten', 'To answer', { ich: 'antworte', du: 'antwortest', er_sie_es: 'antwortet', wir: 'antworten', ihr: 'antwortet', sie_Sie: 'antworten' }),
-  verb('v-20', 'verstehen', 'To understand', { ich: 'verstehe', du: 'verstehst', er_sie_es: 'versteht', wir: 'verstehen', ihr: 'versteht', sie_Sie: 'verstehen' }),
-  verb('v-21', 'vergessen', 'To forget', { ich: 'vergesse', du: 'vergisst', er_sie_es: 'vergisst', wir: 'vergessen', ihr: 'vergesst', sie_Sie: 'vergessen' }, ['verb', 'A1'], false),
-  verb('v-22', 'wissen', 'To know (fact)', { ich: 'weiß', du: 'weißt', er_sie_es: 'weiß', wir: 'wissen', ihr: 'wisst', sie_Sie: 'wissen' }, ['verb', 'A1'], false),
-  verb('v-23', 'kennen', 'To know (person/place)', { ich: 'kenne', du: 'kennst', er_sie_es: 'kennt', wir: 'kennen', ihr: 'kennt', sie_Sie: 'kennen' }),
-  verb('v-24', 'denken', 'To think', { ich: 'denke', du: 'denkst', er_sie_es: 'denkt', wir: 'denken', ihr: 'denkt', sie_Sie: 'denken' }),
+  verb('v-13', 'hören', 'To hear', { ich: 'höre', du: 'hörst', er_sie_es: 'hört', wir: 'hören', ihr: 'hört', sie_Sie: 'hören' }, ['verb', 'A1'], true, ph('gehört')),
+  verb('v-14', 'lesen', 'To read', { ich: 'lese', du: 'liest', er_sie_es: 'liest', wir: 'lesen', ihr: 'lest', sie_Sie: 'lesen' }, ['verb', 'A1'], false, ph('gelesen')),
+  verb('v-15', 'schreiben', 'To write', { ich: 'schreibe', du: 'schreibst', er_sie_es: 'schreibt', wir: 'schreiben', ihr: 'schreibt', sie_Sie: 'schreiben' }, ['verb', 'A1'], true, ph('geschrieben')),
+  verb('v-16', 'sprechen', 'To speak', { ich: 'spreche', du: 'sprichst', er_sie_es: 'spricht', wir: 'sprechen', ihr: 'sprecht', sie_Sie: 'sprechen' }, ['verb', 'A1'], false, ph('gesprochen')),
+  verb('v-17', 'sagen', 'To say', { ich: 'sage', du: 'sagst', er_sie_es: 'sagt', wir: 'sagen', ihr: 'sagt', sie_Sie: 'sagen' }, ['verb', 'A1'], true, ph('gesagt')),
+  verb('v-18', 'fragen', 'To ask', { ich: 'frage', du: 'fragst', er_sie_es: 'fragt', wir: 'fragen', ihr: 'fragt', sie_Sie: 'fragen' }, ['verb', 'A1'], true, ph('gefragt')),
+  verb('v-19', 'antworten', 'To answer', { ich: 'antworte', du: 'antwortest', er_sie_es: 'antwortet', wir: 'antworten', ihr: 'antwortet', sie_Sie: 'antworten' }, ['verb', 'A1'], true, ph('geantwortet')),
+  verb('v-20', 'verstehen', 'To understand', { ich: 'verstehe', du: 'verstehst', er_sie_es: 'versteht', wir: 'verstehen', ihr: 'versteht', sie_Sie: 'verstehen' }, ['verb', 'A1'], true, ph('verstanden')),
+  verb('v-21', 'vergessen', 'To forget', { ich: 'vergesse', du: 'vergisst', er_sie_es: 'vergisst', wir: 'vergessen', ihr: 'vergesst', sie_Sie: 'vergessen' }, ['verb', 'A1'], false, ph('vergessen')),
+  verb('v-22', 'wissen', 'To know (fact)', { ich: 'weiß', du: 'weißt', er_sie_es: 'weiß', wir: 'wissen', ihr: 'wisst', sie_Sie: 'wissen' }, ['verb', 'A1'], false, ph('gewusst')),
+  verb('v-23', 'kennen', 'To know (person/place)', { ich: 'kenne', du: 'kennst', er_sie_es: 'kennt', wir: 'kennen', ihr: 'kennt', sie_Sie: 'kennen' }, ['verb', 'A1'], true, ph('gekannt')),
+  verb('v-24', 'denken', 'To think', { ich: 'denke', du: 'denkst', er_sie_es: 'denkt', wir: 'denken', ihr: 'denkt', sie_Sie: 'denken' }, ['verb', 'A1'], true, ph('gedacht')),
 
   // Actions & Work
-  verb('v-25', 'machen', 'To do / To make', { ich: 'mache', du: 'machst', er_sie_es: 'macht', wir: 'machen', ihr: 'macht', sie_Sie: 'machen' }),
-  verb('v-26', 'arbeiten', 'To work', { ich: 'arbeite', du: 'arbeitest', er_sie_es: 'arbeitet', wir: 'arbeiten', ihr: 'arbeitet', sie_Sie: 'arbeiten' }),
-  verb('v-27', 'spielen', 'To play', { ich: 'spiele', du: 'spielst', er_sie_es: 'spielt', wir: 'spielen', ihr: 'spielt', sie_Sie: 'spielen' }),
-  verb('v-28', 'kochen', 'To cook', { ich: 'koche', du: 'kochst', er_sie_es: 'kocht', wir: 'kochen', ihr: 'kocht', sie_Sie: 'kochen' }),
+  verb('v-25', 'machen', 'To do / To make', { ich: 'mache', du: 'machst', er_sie_es: 'macht', wir: 'machen', ihr: 'macht', sie_Sie: 'machen' }, ['verb', 'A1'], true, ph('gemacht')),
+  verb('v-26', 'arbeiten', 'To work', { ich: 'arbeite', du: 'arbeitest', er_sie_es: 'arbeitet', wir: 'arbeiten', ihr: 'arbeitet', sie_Sie: 'arbeiten' }, ['verb', 'A1'], true, ph('gearbeitet')),
+  verb('v-27', 'spielen', 'To play', { ich: 'spiele', du: 'spielst', er_sie_es: 'spielt', wir: 'spielen', ihr: 'spielt', sie_Sie: 'spielen' }, ['verb', 'A1'], true, ph('gespielt')),
+  verb('v-28', 'kochen', 'To cook', { ich: 'koche', du: 'kochst', er_sie_es: 'kocht', wir: 'kochen', ihr: 'kocht', sie_Sie: 'kochen' }, ['verb', 'A1'], true, ph('gekocht')),
   verb('v-29', 'backen', 'To bake', { ich: 'backe', du: 'bäckst', er_sie_es: 'bäckt', wir: 'backen', ihr: 'backt', sie_Sie: 'backen' }, ['verb', 'A1'], false),
   verb('v-30', 'kaufen', 'To buy', { ich: 'kaufe', du: 'kaufst', er_sie_es: 'kauft', wir: 'kaufen', ihr: 'kauft', sie_Sie: 'kaufen' }),
   verb('v-31', 'verkaufen', 'To sell', { ich: 'verkaufe', du: 'verkaufst', er_sie_es: 'verkauft', wir: 'verkaufen', ihr: 'verkauft', sie_Sie: 'verkaufen' }),
   verb('v-32', 'bezahlen', 'To pay', { ich: 'bezahle', du: 'bezahlst', er_sie_es: 'bezahlt', wir: 'bezahlen', ihr: 'bezahlt', sie_Sie: 'bezahlen' }),
   verb('v-33', 'suchen', 'To search', { ich: 'suche', du: 'suchst', er_sie_es: 'sucht', wir: 'suchen', ihr: 'sucht', sie_Sie: 'suchen' }),
   verb('v-34', 'finden', 'To find', { ich: 'finde', du: 'findest', er_sie_es: 'findet', wir: 'finden', ihr: 'findet', sie_Sie: 'finden' }),
-  verb('v-35', 'bringen', 'To bring', { ich: 'bringe', du: 'bringst', er_sie_es: 'bringt', wir: 'bringen', ihr: 'bringt', sie_Sie: 'bringen' }),
-  verb('v-36', 'nehmen', 'To take', { ich: 'nehme', du: 'nimmst', er_sie_es: 'nimmt', wir: 'nehmen', ihr: 'nehmt', sie_Sie: 'nehmen' }, ['verb', 'A1'], false),
+  verb('v-35', 'bringen', 'To bring', { ich: 'bringe', du: 'bringst', er_sie_es: 'bringt', wir: 'bringen', ihr: 'bringt', sie_Sie: 'bringen' }, ['verb', 'A1'], true, ph('gebracht')),
+  verb('v-36', 'nehmen', 'To take', { ich: 'nehme', du: 'nimmst', er_sie_es: 'nimmt', wir: 'nehmen', ihr: 'nehmt', sie_Sie: 'nehmen' }, ['verb', 'A1'], false, ph('genommen')),
 
   // Movement
-  verb('v-37', 'fahren', 'To drive', { ich: 'fahre', du: 'fährst', er_sie_es: 'fährt', wir: 'fahren', ihr: 'fahrt', sie_Sie: 'fahren' }, ['verb', 'A1'], false),
-  verb('v-38', 'fliegen', 'To fly', { ich: 'fliege', du: 'fliegst', er_sie_es: 'fliegt', wir: 'fliegen', ihr: 'fliegt', sie_Sie: 'fliegen' }),
-  verb('v-39', 'laufen', 'To run', { ich: 'laufe', du: 'läufst', er_sie_es: 'läuft', wir: 'laufen', ihr: 'lauft', sie_Sie: 'laufen' }, ['verb', 'A1'], false),
-  verb('v-40', 'sitzen', 'To sit', { ich: 'sitze', du: 'sitzt', er_sie_es: 'sitzt', wir: 'sitzen', ihr: 'sitzt', sie_Sie: 'sitzen' }),
-  verb('v-41', 'stehen', 'To stand', { ich: 'stehe', du: 'stehst', er_sie_es: 'steht', wir: 'stehen', ihr: 'steht', sie_Sie: 'stehen' }),
-  verb('v-42', 'liegen', 'To lie', { ich: 'liege', du: 'liegst', er_sie_es: 'liegt', wir: 'liegen', ihr: 'liegt', sie_Sie: 'liegen' }),
-  verb('v-43', 'fallen', 'To fall', { ich: 'falle', du: 'fällst', er_sie_es: 'fällt', wir: 'fallen', ihr: 'fallt', sie_Sie: 'fallen' }, ['verb', 'A1'], false),
-  verb('v-44', 'steigen', 'To climb', { ich: 'steige', du: 'steigst', er_sie_es: 'steigt', wir: 'steigen', ihr: 'steigt', sie_Sie: 'steigen' }),
-  verb('v-45', 'springen', 'To jump', { ich: 'springe', du: 'springst', er_sie_es: 'springt', wir: 'springen', ihr: 'springt', sie_Sie: 'springen' }),
-  verb('v-46', 'schwimmen', 'To swim', { ich: 'schwimme', du: 'schwimmst', er_sie_es: 'schwimmt', wir: 'schwimmen', ihr: 'schwimmt', sie_Sie: 'schwimmen' }),
+  verb('v-37', 'fahren', 'To drive', { ich: 'fahre', du: 'fährst', er_sie_es: 'fährt', wir: 'fahren', ihr: 'fahrt', sie_Sie: 'fahren' }, ['verb', 'A1'], false, ps('gefahren')),
+  verb('v-38', 'fliegen', 'To fly', { ich: 'fliege', du: 'fliegst', er_sie_es: 'fliegt', wir: 'fliegen', ihr: 'fliegt', sie_Sie: 'fliegen' }, ['verb', 'A1'], true, ps('geflogen')),
+  verb('v-39', 'laufen', 'To run', { ich: 'laufe', du: 'läufst', er_sie_es: 'läuft', wir: 'laufen', ihr: 'lauft', sie_Sie: 'laufen' }, ['verb', 'A1'], false, ps('gelaufen')),
+  verb('v-40', 'sitzen', 'To sit', { ich: 'sitze', du: 'sitzt', er_sie_es: 'sitzt', wir: 'sitzen', ihr: 'sitzt', sie_Sie: 'sitzen' }, ['verb', 'A1'], true, ph('gesessen')),
+  verb('v-41', 'stehen', 'To stand', { ich: 'stehe', du: 'stehst', er_sie_es: 'steht', wir: 'stehen', ihr: 'steht', sie_Sie: 'stehen' }, ['verb', 'A1'], true, ph('gestanden')),
+  verb('v-42', 'liegen', 'To lie', { ich: 'liege', du: 'liegst', er_sie_es: 'liegt', wir: 'liegen', ihr: 'liegt', sie_Sie: 'liegen' }, ['verb', 'A1'], true, ph('gelegen')),
+  verb('v-43', 'fallen', 'To fall', { ich: 'falle', du: 'fällst', er_sie_es: 'fällt', wir: 'fallen', ihr: 'fallt', sie_Sie: 'fallen' }, ['verb', 'A1'], false, ps('gefallen')),
+  verb('v-44', 'steigen', 'To climb', { ich: 'steige', du: 'steigst', er_sie_es: 'steigt', wir: 'steigen', ihr: 'steigt', sie_Sie: 'steigen' }, ['verb', 'A1'], true, ps('gestiegen')),
+  verb('v-45', 'springen', 'To jump', { ich: 'springe', du: 'springst', er_sie_es: 'springt', wir: 'springen', ihr: 'springt', sie_Sie: 'springen' }, ['verb', 'A1'], true, ps('gesprungen')),
+  verb('v-46', 'schwimmen', 'To swim', { ich: 'schwimme', du: 'schwimmst', er_sie_es: 'schwimmt', wir: 'schwimmen', ihr: 'schwimmt', sie_Sie: 'schwimmen' }, ['verb', 'A1'], true, ps('geschwommen')),
 
   // Social & Emotions
-  verb('v-47', 'treffen', 'To meet', { ich: 'treffe', du: 'triffst', er_sie_es: 'trifft', wir: 'treffen', ihr: 'trefft', sie_Sie: 'treffen' }, ['verb', 'A1'], false),
-  verb('v-48', 'besuchen', 'To visit', { ich: 'besuche', du: 'besuchst', er_sie_es: 'besucht', wir: 'besuchen', ihr: 'besucht', sie_Sie: 'besuchen' }),
-  verb('v-49', 'einladen', 'To invite', { ich: 'lade ein', du: 'lädst ein', er_sie_es: 'lädt ein', wir: 'laden ein', ihr: 'ladet ein', sie_Sie: 'laden ein' }, ['verb', 'separable', 'A1'], false),
-  verb('v-50', 'helfen', 'To help', { ich: 'helfe', du: 'hilfst', er_sie_es: 'hilft', wir: 'helfen', ihr: 'helft', sie_Sie: 'helfen' }, ['verb', 'A1'], false),
+  verb('v-47', 'treffen', 'To meet', { ich: 'treffe', du: 'triffst', er_sie_es: 'trifft', wir: 'treffen', ihr: 'trefft', sie_Sie: 'treffen' }, ['verb', 'A1'], false, ph('getroffen')),
+  verb('v-48', 'besuchen', 'To visit', { ich: 'besuche', du: 'besuchst', er_sie_es: 'besucht', wir: 'besuchen', ihr: 'besucht', sie_Sie: 'besuchen' }, ['verb', 'A1'], true, ph('besucht')),
+  verb('v-49', 'einladen', 'To invite', { ich: 'lade ein', du: 'lädst ein', er_sie_es: 'lädt ein', wir: 'laden ein', ihr: 'ladet ein', sie_Sie: 'laden ein' }, ['verb', 'separable', 'A1'], false, ph('eingeladen')),
+  verb('v-50', 'helfen', 'To help', { ich: 'helfe', du: 'hilfst', er_sie_es: 'hilft', wir: 'helfen', ihr: 'helft', sie_Sie: 'helfen' }, ['verb', 'A1'], false, ph('geholfen')),
   verb('v-51', 'danken', 'To thank', { ich: 'danke', du: 'dankst', er_sie_es: 'dankt', wir: 'danken', ihr: 'dankt', sie_Sie: 'danken' }),
   verb('v-52', 'lieben', 'To love', { ich: 'liebe', du: 'liebst', er_sie_es: 'liebt', wir: 'lieben', ihr: 'liebt', sie_Sie: 'lieben' }),
   verb('v-53', 'hassen', 'To hate', { ich: 'hasse', du: 'hasst', er_sie_es: 'hasst', wir: 'hassen', ihr: 'hasst', sie_Sie: 'hassen' }),
@@ -196,4 +207,52 @@ const VERB_CARDS: VerbCard[] = [
   verb('v-114', 'erreichen', 'To reach', { ich: 'erreiche', du: 'erreichst', er_sie_es: 'erreicht', wir: 'erreichen', ihr: 'erreicht', sie_Sie: 'erreichen' }, ['verb', 'A2']),
 ];
 
-export const SEED_CARDS: FlashCard[] = [...WORD_CARDS, ...VERB_CARDS];
+function phrase(id: string, german: string, english: string, context: string, tags: string[] = ['phrase', 'A1']): PhraseCard {
+  return { id, type: 'phrase', german, english, context, tags, createdAt: T, lastReviewedAt: null, reviewCount: 0 };
+}
+
+const PHRASE_CARDS: PhraseCard[] = [
+  // Greetings & Basics
+  phrase('p-01', 'Wie geht es Ihnen?', 'How are you? (formal)', 'Formal greeting'),
+  phrase('p-02', 'Wie geht es dir?', 'How are you? (informal)', 'Informal greeting'),
+  phrase('p-03', 'Mir geht es gut, danke', 'I\'m fine, thank you', 'Responding to how are you'),
+  phrase('p-04', 'Freut mich!', 'Nice to meet you!', 'When meeting someone'),
+  phrase('p-05', 'Ich heiße...', 'My name is...', 'Introducing yourself'),
+  phrase('p-06', 'Woher kommen Sie?', 'Where are you from? (formal)', 'Asking about origin'),
+  phrase('p-07', 'Ich komme aus...', 'I come from...', 'Stating your origin'),
+
+  // Everyday
+  phrase('p-08', 'Ich verstehe nicht', 'I don\'t understand', 'When confused'),
+  phrase('p-09', 'Können Sie das wiederholen?', 'Can you repeat that?', 'Asking for repetition'),
+  phrase('p-10', 'Sprechen Sie Englisch?', 'Do you speak English?', 'Language help'),
+  phrase('p-11', 'Wie sagt man... auf Deutsch?', 'How do you say... in German?', 'Learning vocabulary'),
+  phrase('p-12', 'Entschuldigung!', 'Excuse me! / Sorry!', 'Getting attention or apologizing'),
+  phrase('p-13', 'Kein Problem', 'No problem', 'Accepting an apology'),
+  phrase('p-14', 'Es tut mir leid', 'I\'m sorry', 'Apologizing sincerely'),
+
+  // Directions & Travel
+  phrase('p-15', 'Wo ist die Toilette?', 'Where is the bathroom?', 'Asking for directions'),
+  phrase('p-16', 'Wie komme ich zum Bahnhof?', 'How do I get to the train station?', 'Asking for directions'),
+  phrase('p-17', 'Ich möchte ein Ticket nach...', 'I would like a ticket to...', 'Buying transport tickets'),
+  phrase('p-18', 'Wann fährt der nächste Zug?', 'When does the next train leave?', 'Transport schedule', ['phrase', 'travel', 'A1']),
+
+  // Restaurant & Shopping
+  phrase('p-19', 'Ich möchte bestellen', 'I would like to order', 'At a restaurant'),
+  phrase('p-20', 'Die Rechnung, bitte', 'The bill, please', 'At a restaurant'),
+  phrase('p-21', 'Ich hätte gerne einen Kaffee', 'I would like a coffee', 'Ordering drinks'),
+  phrase('p-22', 'Was kostet das?', 'How much does that cost?', 'Shopping'),
+  phrase('p-23', 'Kann ich mit Karte bezahlen?', 'Can I pay by card?', 'Payment'),
+
+  // Emergencies & Help
+  phrase('p-24', 'Ich brauche Hilfe', 'I need help', 'Asking for help'),
+  phrase('p-25', 'Rufen Sie einen Arzt!', 'Call a doctor!', 'Medical emergency'),
+  phrase('p-26', 'Ich bin krank', 'I am sick', 'Health'),
+
+  // Time & Schedule
+  phrase('p-27', 'Wie spät ist es?', 'What time is it?', 'Asking the time'),
+  phrase('p-28', 'Wann beginnt...?', 'When does... start?', 'Asking about schedules'),
+  phrase('p-29', 'Heute / Morgen / Gestern', 'Today / Tomorrow / Yesterday', 'Time reference'),
+  phrase('p-30', 'Ich habe eine Frage', 'I have a question', 'Before asking something'),
+];
+
+export const SEED_CARDS: FlashCard[] = [...WORD_CARDS, ...VERB_CARDS, ...PHRASE_CARDS];

@@ -1,17 +1,23 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
 import { useCards } from '../../hooks/useCards';
+import { useTags } from '../../hooks/useTags';
 import { FlashCard } from './FlashCard';
 import { FlashCardProgress } from './FlashCardProgress';
+import { RatingButtons } from './RatingButtons';
+import { SessionStatsBar } from '../stats/SessionStatsBar';
+import { TagFilter } from '../shared/TagFilter';
 import { shuffle } from '../../utils/shuffle';
-import type { FlashCard as FlashCardType } from '../../types';
+import { sortByPriority } from '../../utils/spacedRepetition';
+import type { FlashCard as FlashCardType, Rating } from '../../types';
 
-type Filter = 'all' | 'words' | 'verbs';
+type Filter = 'all' | 'words' | 'verbs' | 'phrases';
 
 const FILTER_OPTIONS: { value: Filter; label: string }[] = [
   { value: 'all', label: 'All' },
   { value: 'words', label: 'Words' },
   { value: 'verbs', label: 'Verbs' },
+  { value: 'phrases', label: 'Phrases' },
 ];
 
 export function FlashCardDeck() {
@@ -21,26 +27,31 @@ export function FlashCardDeck() {
   const [localIndex, setLocalIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [orderedIds, setOrderedIds] = useState<string[]>(() => cards.map((c) => c.id));
+  const [smartOrder, setSmartOrder] = useState(false);
+  const [activeTags, setActiveTags] = useState<string[]>([]);
+  const allTags = useTags();
 
-  // Map of id → card for O(1) lookups
   const cardMap = useMemo(() => {
     const map = new Map<string, FlashCardType>();
     for (const c of cards) map.set(c.id, c);
     return map;
   }, [cards]);
 
-  // IDs that match the current filter
   const filteredIds = useMemo(() => {
     const matches = new Set(
       cards
-        .filter((c) => filter === 'all' || (filter === 'words' ? c.type === 'word' : c.type === 'verb'))
+        .filter((c) => {
+          if (filter === 'words' && c.type !== 'word') return false;
+          if (filter === 'verbs' && c.type !== 'verb') return false;
+          if (filter === 'phrases' && c.type !== 'phrase') return false;
+          if (activeTags.length > 0 && !activeTags.some((t) => c.tags.includes(t))) return false;
+          return true;
+        })
         .map((c) => c.id),
     );
-    // Preserve current order, only keep IDs that match the filter
     return orderedIds.filter((id) => matches.has(id));
-  }, [cards, filter, orderedIds]);
+  }, [cards, filter, orderedIds, activeTags]);
 
-  // Reset order when filter changes
   useEffect(() => {
     setOrderedIds(cards.map((c) => c.id));
     setLocalIndex(0);
@@ -72,7 +83,30 @@ export function FlashCardDeck() {
     setOrderedIds((prev) => shuffle(prev));
     setLocalIndex(0);
     setIsFlipped(false);
+    setSmartOrder(false);
   }, []);
+
+  const doSmartOrder = useCallback(() => {
+    const sorted = sortByPriority(cards, state.reviewData);
+    setOrderedIds(sorted.map((c) => c.id));
+    setLocalIndex(0);
+    setIsFlipped(false);
+    setSmartOrder(true);
+  }, [cards, state.reviewData]);
+
+  const handleRate = useCallback((rating: Rating) => {
+    const id = filteredIdsRef.current[localIndex];
+    if (!id) return;
+    dispatch({ type: 'RECORD_RESULT', payload: { cardId: id, rating } });
+    // Auto-advance after a brief moment
+    setTimeout(() => {
+      setLocalIndex((i) => {
+        const len = filteredIdsRef.current.length;
+        return len > 0 ? (i + 1) % len : 0;
+      });
+      setIsFlipped(false);
+    }, 300);
+  }, [dispatch, localIndex]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -118,6 +152,8 @@ export function FlashCardDeck() {
 
   return (
     <div className="flex flex-col items-center gap-6">
+      <SessionStatsBar />
+
       {/* Filter bar */}
       <div className="flex gap-1 bg-surface-elevated p-1 rounded-xl">
         {FILTER_OPTIONS.map((opt) => (
@@ -144,16 +180,30 @@ export function FlashCardDeck() {
         ))}
       </div>
 
+      <TagFilter
+        tags={allTags}
+        activeTags={activeTags}
+        onToggle={(tag) => {
+          setActiveTags((prev) =>
+            prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+          );
+          setLocalIndex(0);
+          setIsFlipped(false);
+        }}
+        onClear={() => {
+          setActiveTags([]);
+          setLocalIndex(0);
+          setIsFlipped(false);
+        }}
+      />
+
       <FlashCard
         card={currentCard}
         isFlipped={isFlipped}
-        onFlip={() => {
-          flip();
-          if (!isFlipped) {
-            dispatch({ type: 'MARK_REVIEWED', payload: currentCard.id });
-          }
-        }}
+        onFlip={flip}
       />
+
+      {isFlipped && <RatingButtons onRate={handleRate} />}
 
       <FlashCardProgress current={localIndex + 1} total={filteredIds.length} />
 
@@ -165,10 +215,14 @@ export function FlashCardDeck() {
           &larr; Prev
         </button>
         <button
-          onClick={doShuffle}
-          className="px-5 py-2.5 rounded-xl bg-accent/10 border border-accent/20 text-accent hover:bg-accent/15 active:scale-95 transition-all shadow-sm font-medium text-sm"
+          onClick={smartOrder ? doShuffle : doSmartOrder}
+          className={`px-5 py-2.5 rounded-xl border active:scale-95 transition-all shadow-sm font-medium text-sm ${
+            smartOrder
+              ? 'bg-primary/10 border-primary/20 text-primary hover:bg-primary/15'
+              : 'bg-accent/10 border-accent/20 text-accent hover:bg-accent/15'
+          }`}
         >
-          Shuffle
+          {smartOrder ? 'Shuffle' : 'Smart Order'}
         </button>
         <button
           onClick={next}

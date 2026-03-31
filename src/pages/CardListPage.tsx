@@ -12,6 +12,7 @@ function borderColor(card: FlashCard): string {
     }
   }
   if (card.type === 'verb') return 'border-l-amber-500';
+  if (card.type === 'phrase') return 'border-l-sky-500';
   return 'border-l-border';
 }
 
@@ -38,12 +39,13 @@ const PRONOUN_LABELS: { key: string; label: string }[] = [
   { key: 'sie_Sie', label: 'sie/Sie' },
 ];
 
-type Filter = 'all' | 'words' | 'verbs';
+type Filter = 'all' | 'words' | 'verbs' | 'phrases';
 
 const FILTER_OPTIONS: { value: Filter; label: string }[] = [
   { value: 'all', label: 'All' },
   { value: 'words', label: 'Words' },
   { value: 'verbs', label: 'Verbs' },
+  { value: 'phrases', label: 'Phrases' },
 ];
 
 export function CardListPage() {
@@ -55,6 +57,7 @@ export function CardListPage() {
   const filtered = state.cards.filter((card) => {
     if (filter === 'words' && card.type !== 'word') return false;
     if (filter === 'verbs' && card.type !== 'verb') return false;
+    if (filter === 'phrases' && card.type !== 'phrase') return false;
     const q = search.toLowerCase();
     return card.german.toLowerCase().includes(q) || card.english.toLowerCase().includes(q);
   });
@@ -140,6 +143,9 @@ export function CardListPage() {
                   {card.type === 'word' && genderBadge(card.gender)}
                   {card.type === 'verb' && (
                     <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600">verb</span>
+                  )}
+                  {card.type === 'phrase' && (
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-600">phrase</span>
                   )}
                   <div>
                     <span className="font-medium text-text-primary">{card.german}</span>

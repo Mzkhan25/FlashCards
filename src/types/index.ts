@@ -22,32 +22,57 @@ export interface PhraseCard extends CardBase {
   context?: string;
 }
 
+export interface Conjugation {
+  ich: string;
+  du: string;
+  er_sie_es: string;
+  wir: string;
+  ihr: string;
+  sie_Sie: string;
+}
+
 export interface VerbCard extends CardBase {
   type: 'verb';
-  conjugations?: {
-    ich: string;
-    du: string;
-    er_sie_es: string;
-    wir: string;
-    ihr: string;
-    sie_Sie: string;
-  };
+  conjugations?: Conjugation;
+  perfekt?: Conjugation;
   tense?: string;
   isRegular?: boolean;
 }
 
 export type FlashCard = WordCard | PhraseCard | VerbCard;
 
+export interface ReviewData {
+  cardId: string;
+  lastReviewedAt: string | null;
+  reviewCount: number;
+  gotItCount: number;
+  missedItCount: number;
+  ease: number;
+}
+
+export interface SessionStats {
+  cardsReviewed: number;
+  gotIt: number;
+  missedIt: number;
+  streak: number;
+  bestStreak: number;
+}
+
+export type Rating = 'got_it' | 'missed_it';
+
 export type CardAction =
   | { type: 'NEXT_CARD' }
   | { type: 'PREV_CARD' }
   | { type: 'FLIP_CARD' }
   | { type: 'SHUFFLE_DECK' }
-  | { type: 'MARK_REVIEWED'; payload: string }
+  | { type: 'RECORD_RESULT'; payload: { cardId: string; rating: Rating } }
+  | { type: 'RESET_SESSION' }
   | { type: 'LOAD_CARDS'; payload: FlashCard[] };
 
 export interface AppState {
   cards: FlashCard[];
   currentIndex: number;
   isFlipped: boolean;
+  sessionStats: SessionStats;
+  reviewData: Record<string, ReviewData>;
 }
