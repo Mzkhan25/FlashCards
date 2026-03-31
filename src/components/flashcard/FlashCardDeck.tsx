@@ -98,14 +98,15 @@ export function FlashCardDeck() {
     const id = filteredIdsRef.current[localIndex];
     if (!id) return;
     dispatch({ type: 'RECORD_RESULT', payload: { cardId: id, rating } });
-    // Auto-advance after a brief moment
+    // Reset flip immediately so the card flips back on the current card,
+    // then advance to next card after the CSS flip animation (0.6s) completes.
+    setIsFlipped(false);
     setTimeout(() => {
       setLocalIndex((i) => {
         const len = filteredIdsRef.current.length;
         return len > 0 ? (i + 1) % len : 0;
       });
-      setIsFlipped(false);
-    }, 300);
+    }, 600);
   }, [dispatch, localIndex]);
 
   useEffect(() => {
