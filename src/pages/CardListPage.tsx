@@ -63,53 +63,55 @@ export function CardListPage() {
   });
 
   return (
-    <div className="py-6 px-4 md:py-8">
+    <div className="py-6 md:py-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-display text-text-primary">
           All Cards <span className="text-text-muted font-body font-normal text-lg">({filtered.length})</span>
         </h2>
       </div>
 
-      <div className="flex gap-1 bg-surface-elevated p-1 rounded-xl mb-4 w-fit">
-        {FILTER_OPTIONS.map((opt) => (
-          <button
-            key={opt.value}
-            onClick={() => { setFilter(opt.value); setExpandedId(null); }}
-            className="relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
+      {/* Search + Filter inline row */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <div className="relative flex-1">
+          <svg
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
+            width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           >
-            {filter === opt.value && (
-              <motion.span
-                layoutId="card-list-filter-pill"
-                className="absolute inset-0 bg-surface-card rounded-lg shadow-sm"
-                transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
-              />
-            )}
-            <span className={`relative z-10 ${
-              filter === opt.value
-                ? 'text-primary'
-                : 'text-text-secondary hover:text-text-primary'
-            }`}>
-              {opt.label}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      <div className="relative mb-4">
-        <svg
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
-          width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search cards..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface-card text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition-all"
-        />
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search cards..."
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface-card text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition-all"
+          />
+        </div>
+        <div className="flex gap-1 bg-surface-elevated p-1 rounded-xl self-start shrink-0">
+          {FILTER_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => { setFilter(opt.value); setExpandedId(null); }}
+              className="relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
+            >
+              {filter === opt.value && (
+                <motion.span
+                  layoutId="card-list-filter-pill"
+                  className="absolute inset-0 bg-surface-card rounded-lg shadow-sm"
+                  transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+                />
+              )}
+              <span className={`relative z-10 ${
+                filter === opt.value
+                  ? 'text-primary'
+                  : 'text-text-secondary hover:text-text-primary'
+              }`}>
+                {opt.label}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {filtered.length === 0 ? (
@@ -124,7 +126,7 @@ export function CardListPage() {
           <p className="text-text-muted text-sm mt-1">No cards match your search.</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {filtered.map((card, i) => (
             <motion.div
               key={card.id}
@@ -139,15 +141,15 @@ export function CardListPage() {
               }}
             >
               <div className="flex items-center justify-between p-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                   {card.type === 'word' && genderBadge(card.gender)}
                   {card.type === 'verb' && (
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600">verb</span>
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 shrink-0">verb</span>
                   )}
                   {card.type === 'phrase' && (
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-600">phrase</span>
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-600 shrink-0">phrase</span>
                   )}
-                  <div>
+                  <div className="min-w-0">
                     <span className="font-medium text-text-primary">{card.german}</span>
                     <span className="text-text-muted mx-2">&mdash;</span>
                     <span className="text-text-secondary">{card.english}</span>
@@ -156,7 +158,7 @@ export function CardListPage() {
                 {card.type === 'verb' && (
                   <svg
                     width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                    className={`text-text-muted transition-transform ${expandedId === card.id ? 'rotate-180' : ''}`}
+                    className={`text-text-muted transition-transform shrink-0 ml-2 ${expandedId === card.id ? 'rotate-180' : ''}`}
                   >
                     <polyline points="6 9 12 15 18 9" />
                   </svg>

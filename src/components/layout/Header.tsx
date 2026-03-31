@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router';
+import { NavLink, Link } from 'react-router';
 import { motion } from 'motion/react';
 
 const links = [
@@ -53,10 +53,10 @@ const links = [
 function DesktopNav() {
   return (
     <header className="hidden md:block bg-surface-card/80 backdrop-blur-md border-b border-border sticky top-0 z-40">
-      <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-        <h1 className="font-display text-xl text-text-primary">
+      <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Link to="/" className="font-display text-xl text-text-primary hover:opacity-70 transition-opacity">
           <span className="text-primary">DE</span> FlashCards
-        </h1>
+        </Link>
         <div className="flex items-center gap-3">
         <nav className="flex gap-1 bg-surface-elevated rounded-xl p-1">
           {links.map((link) => (

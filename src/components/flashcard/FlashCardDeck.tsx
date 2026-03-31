@@ -151,90 +151,141 @@ export function FlashCardDeck() {
   if (!currentCard) return null;
 
   return (
-    <div className="flex flex-col items-center gap-6">
-      <SessionStatsBar />
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 items-start">
+      {/* Main card area */}
+      <div className="flex flex-col items-center gap-6">
+        {/* Filter bar */}
+        <div className="flex gap-1 bg-surface-elevated p-1 rounded-xl">
+          {FILTER_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setFilter(opt.value)}
+              className="relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
+            >
+              {filter === opt.value && (
+                <motion.span
+                  layoutId="filter-pill"
+                  className="absolute inset-0 bg-surface-card rounded-lg shadow-sm"
+                  transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+                />
+              )}
+              <span className={`relative z-10 ${
+                filter === opt.value
+                  ? 'text-primary'
+                  : 'text-text-secondary hover:text-text-primary'
+              }`}>
+                {opt.label}
+              </span>
+            </button>
+          ))}
+        </div>
 
-      {/* Filter bar */}
-      <div className="flex gap-1 bg-surface-elevated p-1 rounded-xl">
-        {FILTER_OPTIONS.map((opt) => (
+        {/* Tags on mobile only */}
+        <div className="lg:hidden">
+          <TagFilter
+            tags={allTags}
+            activeTags={activeTags}
+            onToggle={(tag) => {
+              setActiveTags((prev) =>
+                prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+              );
+              setLocalIndex(0);
+              setIsFlipped(false);
+            }}
+            onClear={() => {
+              setActiveTags([]);
+              setLocalIndex(0);
+              setIsFlipped(false);
+            }}
+          />
+        </div>
+
+        <FlashCard
+          card={currentCard}
+          isFlipped={isFlipped}
+          onFlip={flip}
+        />
+
+        {isFlipped && <RatingButtons onRate={handleRate} />}
+
+        <FlashCardProgress current={localIndex + 1} total={filteredIds.length} />
+
+        <div className="flex gap-3">
           <button
-            key={opt.value}
-            onClick={() => setFilter(opt.value)}
-            className="relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
+            onClick={prev}
+            className="px-5 py-2.5 rounded-xl bg-surface-card border border-border text-text-primary hover:bg-surface-elevated active:scale-95 transition-all shadow-sm font-medium text-sm"
           >
-            {filter === opt.value && (
-              <motion.span
-                layoutId="filter-pill"
-                className="absolute inset-0 bg-surface-card rounded-lg shadow-sm"
-                transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
-              />
-            )}
-            <span className={`relative z-10 ${
-              filter === opt.value
-                ? 'text-primary'
-                : 'text-text-secondary hover:text-text-primary'
-            }`}>
-              {opt.label}
-            </span>
+            &larr; Prev
           </button>
-        ))}
+          <button
+            onClick={smartOrder ? doShuffle : doSmartOrder}
+            className={`px-5 py-2.5 rounded-xl border active:scale-95 transition-all shadow-sm font-medium text-sm ${
+              smartOrder
+                ? 'bg-primary/10 border-primary/20 text-primary hover:bg-primary/15'
+                : 'bg-accent/10 border-accent/20 text-accent hover:bg-accent/15'
+            }`}
+          >
+            {smartOrder ? 'Shuffle' : 'Smart Order'}
+          </button>
+          <button
+            onClick={next}
+            className="px-5 py-2.5 rounded-xl bg-surface-card border border-border text-text-primary hover:bg-surface-elevated active:scale-95 transition-all shadow-sm font-medium text-sm"
+          >
+            Next &rarr;
+          </button>
+        </div>
+
+        <p className="text-xs text-text-muted">
+          Space to flip &middot; Arrow keys to navigate
+        </p>
       </div>
 
-      <TagFilter
-        tags={allTags}
-        activeTags={activeTags}
-        onToggle={(tag) => {
-          setActiveTags((prev) =>
-            prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
-          );
-          setLocalIndex(0);
-          setIsFlipped(false);
-        }}
-        onClear={() => {
-          setActiveTags([]);
-          setLocalIndex(0);
-          setIsFlipped(false);
-        }}
-      />
+      {/* Sidebar — desktop only */}
+      <aside className="hidden lg:flex flex-col gap-4">
+        <div className="bg-surface-card border border-border rounded-xl p-5">
+          <h3 className="font-display text-sm text-text-primary mb-3">Session</h3>
+          <SessionStatsBar layout="vertical" />
+        </div>
 
-      <FlashCard
-        card={currentCard}
-        isFlipped={isFlipped}
-        onFlip={flip}
-      />
+        <div className="bg-surface-card border border-border rounded-xl p-5">
+          <h3 className="font-display text-sm text-text-primary mb-3">Tags</h3>
+          <TagFilter
+            tags={allTags}
+            activeTags={activeTags}
+            onToggle={(tag) => {
+              setActiveTags((prev) =>
+                prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+              );
+              setLocalIndex(0);
+              setIsFlipped(false);
+            }}
+            onClear={() => {
+              setActiveTags([]);
+              setLocalIndex(0);
+              setIsFlipped(false);
+            }}
+          />
+        </div>
 
-      {isFlipped && <RatingButtons onRate={handleRate} />}
+        <div className="bg-surface-card border border-border rounded-xl p-5">
+          <h3 className="font-display text-sm text-text-primary mb-3">Keyboard</h3>
+          <div className="space-y-2 text-xs text-text-secondary">
+            <div className="flex items-center gap-2">
+              <kbd className="font-mono text-[11px] bg-surface-elevated px-1.5 py-0.5 rounded border border-border">Space</kbd>
+              <span>Flip card</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <kbd className="font-mono text-[11px] bg-surface-elevated px-1.5 py-0.5 rounded border border-border">&larr; &rarr;</kbd>
+              <span>Navigate</span>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-      <FlashCardProgress current={localIndex + 1} total={filteredIds.length} />
-
-      <div className="flex gap-3">
-        <button
-          onClick={prev}
-          className="px-5 py-2.5 rounded-xl bg-surface-card border border-border text-text-primary hover:bg-surface-elevated active:scale-95 transition-all shadow-sm font-medium text-sm"
-        >
-          &larr; Prev
-        </button>
-        <button
-          onClick={smartOrder ? doShuffle : doSmartOrder}
-          className={`px-5 py-2.5 rounded-xl border active:scale-95 transition-all shadow-sm font-medium text-sm ${
-            smartOrder
-              ? 'bg-primary/10 border-primary/20 text-primary hover:bg-primary/15'
-              : 'bg-accent/10 border-accent/20 text-accent hover:bg-accent/15'
-          }`}
-        >
-          {smartOrder ? 'Shuffle' : 'Smart Order'}
-        </button>
-        <button
-          onClick={next}
-          className="px-5 py-2.5 rounded-xl bg-surface-card border border-border text-text-primary hover:bg-surface-elevated active:scale-95 transition-all shadow-sm font-medium text-sm"
-        >
-          Next &rarr;
-        </button>
+      {/* Session stats on mobile */}
+      <div className="lg:hidden flex justify-center -mt-4">
+        <SessionStatsBar />
       </div>
-
-      <p className="text-xs text-text-muted">
-        Space to flip &middot; Arrow keys to navigate
-      </p>
     </div>
   );
 }

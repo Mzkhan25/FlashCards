@@ -8,7 +8,7 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-surface bg-dotgrid">
       <Header />
-      <main className="max-w-3xl mx-auto pb-24 md:pb-0">
+      <main className="max-w-5xl mx-auto pb-24 md:pb-0 px-4 md:px-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
