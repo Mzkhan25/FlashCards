@@ -73,6 +73,98 @@ const WORD_CARDS: WordCard[] = [
   { id: 'seed-day-01', type: 'word', german: 'Montag', english: 'Monday', gender: 'der', tags: ['day', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
   { id: 'seed-day-02', type: 'word', german: 'Dienstag', english: 'Tuesday', gender: 'der', tags: ['day', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
   { id: 'seed-day-03', type: 'word', german: 'Mittwoch', english: 'Wednesday', gender: 'der', tags: ['day', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+
+  // Fruits (Obst)
+  { id: 'seed-fruit-01', type: 'word', german: 'Apfel', english: 'Apple', gender: 'der', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Äpfel' },
+  { id: 'seed-fruit-02', type: 'word', german: 'Banane', english: 'Banana', gender: 'die', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Bananen' },
+  { id: 'seed-fruit-03', type: 'word', german: 'Orange', english: 'Orange', gender: 'die', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Orangen' },
+  { id: 'seed-fruit-04', type: 'word', german: 'Erdbeere', english: 'Strawberry', gender: 'die', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Erdbeeren' },
+  { id: 'seed-fruit-05', type: 'word', german: 'Traube', english: 'Grape', gender: 'die', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Trauben' },
+  { id: 'seed-fruit-06', type: 'word', german: 'Kirsche', english: 'Cherry', gender: 'die', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Kirschen' },
+  { id: 'seed-fruit-07', type: 'word', german: 'Birne', english: 'Pear', gender: 'die', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Birnen' },
+  { id: 'seed-fruit-08', type: 'word', german: 'Zitrone', english: 'Lemon', gender: 'die', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Zitronen' },
+  { id: 'seed-fruit-09', type: 'word', german: 'Wassermelone', english: 'Watermelon', gender: 'die', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Wassermelonen' },
+  { id: 'seed-fruit-10', type: 'word', german: 'Pfirsich', english: 'Peach', gender: 'der', tags: ['fruit', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Pfirsiche' },
+
+  // Vegetables (Gemüse)
+  { id: 'seed-veg-01', type: 'word', german: 'Kartoffel', english: 'Potato', gender: 'die', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Kartoffeln' },
+  { id: 'seed-veg-02', type: 'word', german: 'Tomate', english: 'Tomato', gender: 'die', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Tomaten' },
+  { id: 'seed-veg-03', type: 'word', german: 'Karotte', english: 'Carrot', gender: 'die', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Karotten' },
+  { id: 'seed-veg-04', type: 'word', german: 'Zwiebel', english: 'Onion', gender: 'die', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Zwiebeln' },
+  { id: 'seed-veg-05', type: 'word', german: 'Gurke', english: 'Cucumber', gender: 'die', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Gurken' },
+  { id: 'seed-veg-06', type: 'word', german: 'Paprika', english: 'Bell pepper', gender: 'die', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Paprikas' },
+  { id: 'seed-veg-07', type: 'word', german: 'Salat', english: 'Salad / Lettuce', gender: 'der', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Salate' },
+  { id: 'seed-veg-08', type: 'word', german: 'Knoblauch', english: 'Garlic', gender: 'der', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-veg-09', type: 'word', german: 'Pilz', english: 'Mushroom', gender: 'der', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Pilze' },
+  { id: 'seed-veg-10', type: 'word', german: 'Mais', english: 'Corn', gender: 'der', tags: ['vegetable', 'food', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+
+  // Colors (Farben)
+  { id: 'seed-color-01', type: 'word', german: 'rot', english: 'Red', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-color-02', type: 'word', german: 'blau', english: 'Blue', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-color-03', type: 'word', german: 'grün', english: 'Green', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-color-04', type: 'word', german: 'gelb', english: 'Yellow', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-color-05', type: 'word', german: 'schwarz', english: 'Black', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-color-06', type: 'word', german: 'weiß', english: 'White', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-color-07', type: 'word', german: 'braun', english: 'Brown', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-color-08', type: 'word', german: 'orange', english: 'Orange (color)', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-color-09', type: 'word', german: 'rosa', english: 'Pink', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-color-10', type: 'word', german: 'grau', english: 'Grey', tags: ['color', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+
+  // Clothing (Kleidung)
+  { id: 'seed-cloth-01', type: 'word', german: 'Hemd', english: 'Shirt', gender: 'das', tags: ['clothing', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Hemden' },
+  { id: 'seed-cloth-02', type: 'word', german: 'Hose', english: 'Pants / Trousers', gender: 'die', tags: ['clothing', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Hosen' },
+  { id: 'seed-cloth-03', type: 'word', german: 'Schuh', english: 'Shoe', gender: 'der', tags: ['clothing', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Schuhe' },
+  { id: 'seed-cloth-04', type: 'word', german: 'Jacke', english: 'Jacket', gender: 'die', tags: ['clothing', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Jacken' },
+  { id: 'seed-cloth-05', type: 'word', german: 'Hut', english: 'Hat', gender: 'der', tags: ['clothing', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Hüte' },
+  { id: 'seed-cloth-06', type: 'word', german: 'Kleid', english: 'Dress', gender: 'das', tags: ['clothing', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Kleider' },
+  { id: 'seed-cloth-07', type: 'word', german: 'Rock', english: 'Skirt', gender: 'der', tags: ['clothing', 'A2'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Röcke' },
+  { id: 'seed-cloth-08', type: 'word', german: 'Socke', english: 'Sock', gender: 'die', tags: ['clothing', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Socken' },
+  { id: 'seed-cloth-09', type: 'word', german: 'Schal', english: 'Scarf', gender: 'der', tags: ['clothing', 'A2'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Schals' },
+  { id: 'seed-cloth-10', type: 'word', german: 'Handschuh', english: 'Glove', gender: 'der', tags: ['clothing', 'A2'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Handschuhe' },
+
+  // Body parts (Körper)
+  { id: 'seed-body-01', type: 'word', german: 'Kopf', english: 'Head', gender: 'der', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Köpfe' },
+  { id: 'seed-body-02', type: 'word', german: 'Hand', english: 'Hand', gender: 'die', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Hände' },
+  { id: 'seed-body-03', type: 'word', german: 'Auge', english: 'Eye', gender: 'das', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Augen' },
+  { id: 'seed-body-04', type: 'word', german: 'Nase', english: 'Nose', gender: 'die', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Nasen' },
+  { id: 'seed-body-05', type: 'word', german: 'Mund', english: 'Mouth', gender: 'der', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Münder' },
+  { id: 'seed-body-06', type: 'word', german: 'Ohr', english: 'Ear', gender: 'das', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Ohren' },
+  { id: 'seed-body-07', type: 'word', german: 'Arm', english: 'Arm', gender: 'der', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Arme' },
+  { id: 'seed-body-08', type: 'word', german: 'Bein', english: 'Leg', gender: 'das', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Beine' },
+  { id: 'seed-body-09', type: 'word', german: 'Fuß', english: 'Foot', gender: 'der', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Füße' },
+  { id: 'seed-body-10', type: 'word', german: 'Herz', english: 'Heart', gender: 'das', tags: ['body', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Herzen' },
+
+  // Family (Familie)
+  { id: 'seed-family-01', type: 'word', german: 'Mutter', english: 'Mother', gender: 'die', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Mütter' },
+  { id: 'seed-family-02', type: 'word', german: 'Vater', english: 'Father', gender: 'der', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Väter' },
+  { id: 'seed-family-03', type: 'word', german: 'Bruder', english: 'Brother', gender: 'der', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Brüder' },
+  { id: 'seed-family-04', type: 'word', german: 'Schwester', english: 'Sister', gender: 'die', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Schwestern' },
+  { id: 'seed-family-05', type: 'word', german: 'Oma', english: 'Grandmother', gender: 'die', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Omas' },
+  { id: 'seed-family-06', type: 'word', german: 'Opa', english: 'Grandfather', gender: 'der', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Opas' },
+  { id: 'seed-family-07', type: 'word', german: 'Sohn', english: 'Son', gender: 'der', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Söhne' },
+  { id: 'seed-family-08', type: 'word', german: 'Tochter', english: 'Daughter', gender: 'die', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Töchter' },
+  { id: 'seed-family-09', type: 'word', german: 'Onkel', english: 'Uncle', gender: 'der', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Onkel' },
+  { id: 'seed-family-10', type: 'word', german: 'Tante', english: 'Aunt', gender: 'die', tags: ['family', 'person', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Tanten' },
+
+  // Weather (Wetter)
+  { id: 'seed-weather-01', type: 'word', german: 'Sonne', english: 'Sun', gender: 'die', tags: ['weather', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Sonnen' },
+  { id: 'seed-weather-02', type: 'word', german: 'Regen', english: 'Rain', gender: 'der', tags: ['weather', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-weather-03', type: 'word', german: 'Schnee', english: 'Snow', gender: 'der', tags: ['weather', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-weather-04', type: 'word', german: 'Wind', english: 'Wind', gender: 'der', tags: ['weather', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Winde' },
+  { id: 'seed-weather-05', type: 'word', german: 'Wolke', english: 'Cloud', gender: 'die', tags: ['weather', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Wolken' },
+  { id: 'seed-weather-06', type: 'word', german: 'Sturm', english: 'Storm', gender: 'der', tags: ['weather', 'A2'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Stürme' },
+  { id: 'seed-weather-07', type: 'word', german: 'warm', english: 'Warm', tags: ['weather', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+  { id: 'seed-weather-08', type: 'word', german: 'kalt', english: 'Cold', tags: ['weather', 'adjective', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0 },
+
+  // Rooms & House (Zimmer)
+  { id: 'seed-room-01', type: 'word', german: 'Küche', english: 'Kitchen', gender: 'die', tags: ['room', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Küchen' },
+  { id: 'seed-room-02', type: 'word', german: 'Schlafzimmer', english: 'Bedroom', gender: 'das', tags: ['room', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Schlafzimmer' },
+  { id: 'seed-room-03', type: 'word', german: 'Badezimmer', english: 'Bathroom', gender: 'das', tags: ['room', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Badezimmer' },
+  { id: 'seed-room-04', type: 'word', german: 'Wohnzimmer', english: 'Living room', gender: 'das', tags: ['room', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Wohnzimmer' },
+  { id: 'seed-room-05', type: 'word', german: 'Garten', english: 'Garden', gender: 'der', tags: ['room', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Gärten' },
+  { id: 'seed-room-06', type: 'word', german: 'Fenster', english: 'Window', gender: 'das', tags: ['room', 'A1'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Fenster' },
+  { id: 'seed-room-07', type: 'word', german: 'Wand', english: 'Wall', gender: 'die', tags: ['room', 'A2'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Wände' },
+  { id: 'seed-room-08', type: 'word', german: 'Treppe', english: 'Stairs', gender: 'die', tags: ['room', 'A2'], createdAt: T, lastReviewedAt: null, reviewCount: 0, plural: 'Treppen' },
 ];
 
 const VERB_CARDS: VerbCard[] = [
