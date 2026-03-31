@@ -1,25 +1,10 @@
-import { createContext, useReducer, useEffect, type ReactNode } from 'react';
-import type { FlashCard, AppState, CardAction } from '../types';
+import { createContext, useReducer, type ReactNode } from 'react';
+import type { AppState, CardAction } from '../types';
 import { SEED_CARDS } from '../data/seed';
 import { shuffle } from '../utils/shuffle';
 
-const STORAGE_KEY = 'flashcards_v1';
-
-function loadCards(): FlashCard[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored) as FlashCard[];
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-    }
-  } catch {
-    // fall through to seed
-  }
-  return SEED_CARDS;
-}
-
 const initialState: AppState = {
-  cards: loadCards(),
+  cards: SEED_CARDS,
   currentIndex: 0,
   isFlipped: false,
 };
@@ -73,14 +58,5 @@ export const CardContext = createContext<CardContextValue | null>(null);
 
 export function CardProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cardReducer, initialState);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.cards));
-    } catch {
-      // ignore
-    }
-  }, [state.cards]);
-
   return <CardContext.Provider value={{ state, dispatch }}>{children}</CardContext.Provider>;
 }
