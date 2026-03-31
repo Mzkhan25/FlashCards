@@ -1,23 +1,174 @@
 @import "tailwindcss";
 
+/* ─── Design System ─── */
+@theme {
+  /* Typography */
+  --font-display: 'DM Serif Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Cream (surfaces) */
+  --color-cream-50: #FDFBF7;
+  --color-cream-100: #F9F5EC;
+  --color-cream-200: #F0E8D8;
+
+  /* Forest green (primary) */
+  --color-forest-400: #3D7A53;
+  --color-forest-500: #2D5A3D;
+  --color-forest-600: #1F4A2F;
+  --color-forest-700: #163B24;
+  --color-forest-800: #0F2C1A;
+  --color-forest-900: #0A1F13;
+
+  /* Amber (accent) */
+  --color-amber-400: #E8A838;
+  --color-amber-500: #D4952A;
+  --color-amber-600: #B8801F;
+
+  /* Ink (text, borders) */
+  --color-ink-50: #F5F5F4;
+  --color-ink-100: #E7E5E0;
+  --color-ink-200: #D5D2CB;
+  --color-ink-300: #B0ACA3;
+  --color-ink-400: #8A857A;
+  --color-ink-500: #6B665C;
+  --color-ink-600: #504C44;
+  --color-ink-700: #3A372F;
+  --color-ink-800: #26231D;
+  --color-ink-900: #151310;
+
+  /* Gender semantic colors */
+  --color-gender-der: #3B6FA0;
+  --color-gender-die: #A0486B;
+  --color-gender-das: #4A8B5C;
+
+  /* Gender bg tints */
+  --color-gender-der-bg: #E8F0F8;
+  --color-gender-die-bg: #F8E8F0;
+  --color-gender-das-bg: #E8F5EC;
+
+  /* Semantic tokens (light mode defaults) */
+  --color-surface: #FDFBF7;
+  --color-surface-card: #FFFFFF;
+  --color-surface-elevated: #F3EFE5;
+  --color-primary: #1F4A2F;
+  --color-primary-light: #2D5A3D;
+  --color-accent: #D4952A;
+  --color-accent-light: #E8A838;
+  --color-text-primary: #26231D;
+  --color-text-secondary: #6B665C;
+  --color-text-muted: #8A857A;
+  --color-border: #E7E5E0;
+  --color-border-light: #F0E8D8;
+  --color-success: #2D5A3D;
+}
+
+/* ─── Dark Mode ─── */
+@layer base {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-surface: #1A1816;
+      --color-surface-card: #252320;
+      --color-surface-elevated: #2E2B27;
+      --color-primary: #5BA872;
+      --color-primary-light: #6FC287;
+      --color-accent: #E8A838;
+      --color-accent-light: #F0BC5E;
+      --color-text-primary: #E8E4DD;
+      --color-text-secondary: #A09B91;
+      --color-text-muted: #7A756B;
+      --color-border: #3A372F;
+      --color-border-light: #2E2B27;
+      --color-success: #5BA872;
+
+      --color-gender-der: #5A9FD4;
+      --color-gender-die: #D46B96;
+      --color-gender-das: #6BC282;
+      --color-gender-der-bg: #1E2A35;
+      --color-gender-die-bg: #351E2A;
+      --color-gender-das-bg: #1E3525;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+  }
+}
+
+/* ─── Background Pattern ─── */
 @layer components {
-  .card-container {
-    perspective: 1000px;
+  .bg-dotgrid {
+    background-image: radial-gradient(circle at 1px 1px, var(--color-border) 0.5px, transparent 0);
+    background-size: 24px 24px;
   }
-  .card-inner {
-    transition: transform 0.5s;
-    transform-style: preserve-3d;
+}
+
+/* ─── Card Flip ─── */
+.card-container {
+  perspective: 1000px;
+}
+.card-inner {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.card-inner.flipped {
+  transform: rotateY(180deg);
+}
+.card-front,
+.card-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  position: absolute;
+  inset: 0;
+}
+.card-back {
+  transform: rotateY(180deg);
+}
+
+/* ─── Animations ─── */
+@layer components {
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  .card-inner.flipped {
-    transform: rotateY(180deg);
+
+  @keyframes gentleFloat {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
   }
-  .card-front,
-  .card-back {
-    backface-visibility: hidden;
-    position: absolute;
-    inset: 0;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
-  .card-back {
-    transform: rotateY(180deg);
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.35s ease-out both;
+  }
+
+  .animate-float {
+    animation: gentleFloat 3s ease-in-out infinite;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out both;
   }
 }

@@ -1,4 +1,5 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { motion } from 'motion/react';
 import { useCards } from '../../hooks/useCards';
 import { FlashCard } from './FlashCard';
 import { FlashCardProgress } from './FlashCardProgress';
@@ -19,7 +20,7 @@ export function FlashCardDeck() {
   const [filter, setFilter] = useState<Filter>('all');
   const [localIndex, setLocalIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [filteredCards, setFilteredCards] = useState<FlashCardType[]>([]);
+  const [filteredCards, setFilteredCards] = useState<FlashCardType[]>(() => cards);
 
   const derived = useMemo(() => {
     switch (filter) {
@@ -29,33 +30,42 @@ export function FlashCardDeck() {
     }
   }, [cards, filter]);
 
+  // Sync filtered cards from derived, but only reset index/flip when filter changes
   useEffect(() => {
     setFilteredCards(derived);
-    setLocalIndex(0);
-    setIsFlipped(false);
   }, [derived]);
 
-  function next() {
-    if (filteredCards.length === 0) return;
-    setLocalIndex((i) => (i + 1) % filteredCards.length);
-    setIsFlipped(false);
-  }
-
-  function prev() {
-    if (filteredCards.length === 0) return;
-    setLocalIndex((i) => (i - 1 + filteredCards.length) % filteredCards.length);
-    setIsFlipped(false);
-  }
-
-  function flip() {
-    setIsFlipped((f) => !f);
-  }
-
-  function doShuffle() {
-    setFilteredCards(shuffle(filteredCards));
+  useEffect(() => {
     setLocalIndex(0);
     setIsFlipped(false);
-  }
+  }, [filter]);
+
+  const filteredCardsRef = useRef(filteredCards);
+  filteredCardsRef.current = filteredCards;
+
+  const next = useCallback(() => {
+    const len = filteredCardsRef.current.length;
+    if (len === 0) return;
+    setLocalIndex((i) => (i + 1) % len);
+    setIsFlipped(false);
+  }, []);
+
+  const prev = useCallback(() => {
+    const len = filteredCardsRef.current.length;
+    if (len === 0) return;
+    setLocalIndex((i) => (i - 1 + len) % len);
+    setIsFlipped(false);
+  }, []);
+
+  const flip = useCallback(() => {
+    setIsFlipped((f) => !f);
+  }, []);
+
+  const doShuffle = useCallback(() => {
+    setFilteredCards((prev) => shuffle(prev));
+    setLocalIndex(0);
+    setIsFlipped(false);
+  }, []);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -78,13 +88,19 @@ export function FlashCardDeck() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [filteredCards.length]);
+  }, [flip, next, prev]);
 
   if (cards.length === 0) {
     return (
       <div className="text-center py-20">
-        <p className="text-xl text-gray-500">No cards yet</p>
-        <p className="text-gray-400 mt-2">Add some words to get started!</p>
+        <div className="animate-float inline-block mb-4">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-muted">
+            <rect x="2" y="4" width="16" height="16" rx="2" />
+            <rect x="6" y="2" width="16" height="16" rx="2" />
+          </svg>
+        </div>
+        <p className="text-xl text-text-secondary font-display">No cards yet</p>
+        <p className="text-text-muted mt-2">Add some words to get started!</p>
       </div>
     );
   }
@@ -95,18 +111,27 @@ export function FlashCardDeck() {
   return (
     <div className="flex flex-col items-center gap-6">
       {/* Filter bar */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+      <div className="flex gap-1 bg-surface-elevated p-1 rounded-xl">
         {FILTER_OPTIONS.map((opt) => (
           <button
             key={opt.value}
             onClick={() => setFilter(opt.value)}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              filter === opt.value
-                ? 'bg-white text-indigo-700 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
+            className="relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
           >
-            {opt.label}
+            {filter === opt.value && (
+              <motion.span
+                layoutId="filter-pill"
+                className="absolute inset-0 bg-surface-card rounded-lg shadow-sm"
+                transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+              />
+            )}
+            <span className={`relative z-10 ${
+              filter === opt.value
+                ? 'text-primary'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}>
+              {opt.label}
+            </span>
           </button>
         ))}
       </div>
@@ -127,25 +152,25 @@ export function FlashCardDeck() {
       <div className="flex gap-3">
         <button
           onClick={prev}
-          className="px-5 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+          className="px-5 py-2.5 rounded-xl bg-surface-card border border-border text-text-primary hover:bg-surface-elevated active:scale-95 transition-all shadow-sm font-medium text-sm"
         >
           &larr; Prev
         </button>
         <button
           onClick={doShuffle}
-          className="px-5 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+          className="px-5 py-2.5 rounded-xl bg-accent/10 border border-accent/20 text-accent hover:bg-accent/15 active:scale-95 transition-all shadow-sm font-medium text-sm"
         >
           Shuffle
         </button>
         <button
           onClick={next}
-          className="px-5 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+          className="px-5 py-2.5 rounded-xl bg-surface-card border border-border text-text-primary hover:bg-surface-elevated active:scale-95 transition-all shadow-sm font-medium text-sm"
         >
           Next &rarr;
         </button>
       </div>
 
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-text-muted">
         Space to flip &middot; Arrow keys to navigate
       </p>
     </div>

@@ -1,36 +1,118 @@
 import { NavLink } from 'react-router';
+import { motion } from 'motion/react';
 
 const links = [
-  { to: '/', label: 'Practice' },
-  { to: '/conjugate', label: 'Conjugate' },
-  { to: '/cards', label: 'All Cards' },
+  {
+    to: '/',
+    label: 'Practice',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="4" width="16" height="16" rx="2" />
+        <rect x="6" y="2" width="16" height="16" rx="2" />
+      </svg>
+    ),
+  },
+  {
+    to: '/conjugate',
+    label: 'Conjugate',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+      </svg>
+    ),
+  },
+  {
+    to: '/cards',
+    label: 'All Cards',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="8" y1="6" x2="21" y2="6" />
+        <line x1="8" y1="12" x2="21" y2="12" />
+        <line x1="8" y1="18" x2="21" y2="18" />
+        <line x1="3" y1="6" x2="3.01" y2="6" />
+        <line x1="3" y1="12" x2="3.01" y2="12" />
+        <line x1="3" y1="18" x2="3.01" y2="18" />
+      </svg>
+    ),
+  },
 ];
 
-export function Header() {
+function DesktopNav() {
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">
-          <span className="text-indigo-600">DE</span> FlashCards
+    <header className="hidden md:block bg-surface-card/80 backdrop-blur-md border-b border-border sticky top-0 z-40">
+      <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+        <h1 className="font-display text-xl text-text-primary">
+          <span className="text-primary">DE</span> FlashCards
         </h1>
-        <nav className="flex gap-1">
+        <nav className="flex gap-1 bg-surface-elevated rounded-xl p-1">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
-              className={({ isActive }) =>
-                `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`
-              }
+              className="relative px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
-              {link.label}
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.span
+                      layoutId="desktop-nav-pill"
+                      className="absolute inset-0 bg-surface-card rounded-lg shadow-sm"
+                      transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+                    />
+                  )}
+                  <span className={`relative z-10 ${isActive ? 'text-primary' : 'text-text-secondary hover:text-text-primary'}`}>
+                    {link.label}
+                  </span>
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
       </div>
     </header>
+  );
+}
+
+function MobileNav() {
+  return (
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-surface-card/90 backdrop-blur-md border-t border-border pb-[env(safe-area-inset-bottom)]">
+      <div className="flex items-stretch">
+        {links.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className="flex-1 flex flex-col items-center gap-1 py-3 transition-colors"
+          >
+            {({ isActive }) => (
+              <>
+                <span className={isActive ? 'text-primary' : 'text-text-muted'}>
+                  {link.icon}
+                </span>
+                <span className={`text-[11px] font-medium ${isActive ? 'text-primary' : 'text-text-muted'}`}>
+                  {link.label}
+                </span>
+                {isActive && (
+                  <motion.span
+                    layoutId="mobile-nav-dot"
+                    className="absolute top-1.5 w-1 h-1 rounded-full bg-primary"
+                    transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
+                  />
+                )}
+              </>
+            )}
+          </NavLink>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+export function Header() {
+  return (
+    <>
+      <DesktopNav />
+      <MobileNav />
+    </>
   );
 }
