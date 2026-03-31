@@ -29,11 +29,32 @@ function genderBadge(gender?: string) {
   );
 }
 
+const PRONOUN_LABELS: { key: string; label: string }[] = [
+  { key: 'ich', label: 'ich' },
+  { key: 'du', label: 'du' },
+  { key: 'er_sie_es', label: 'er/sie/es' },
+  { key: 'wir', label: 'wir' },
+  { key: 'ihr', label: 'ihr' },
+  { key: 'sie_Sie', label: 'sie/Sie' },
+];
+
+type Filter = 'all' | 'words' | 'verbs';
+
+const FILTER_OPTIONS: { value: Filter; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'words', label: 'Words' },
+  { value: 'verbs', label: 'Verbs' },
+];
+
 export function CardListPage() {
   const { state } = useCards();
   const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<Filter>('all');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const filtered = state.cards.filter((card) => {
+    if (filter === 'words' && card.type !== 'word') return false;
+    if (filter === 'verbs' && card.type !== 'verb') return false;
     const q = search.toLowerCase();
     return card.german.toLowerCase().includes(q) || card.english.toLowerCase().includes(q);
   });
@@ -42,8 +63,33 @@ export function CardListPage() {
     <div className="py-6 px-4 md:py-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-display text-text-primary">
-          All Cards <span className="text-text-muted font-body font-normal text-lg">({state.cards.length})</span>
+          All Cards <span className="text-text-muted font-body font-normal text-lg">({filtered.length})</span>
         </h2>
+      </div>
+
+      <div className="flex gap-1 bg-surface-elevated p-1 rounded-xl mb-4 w-fit">
+        {FILTER_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => { setFilter(opt.value); setExpandedId(null); }}
+            className="relative px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
+          >
+            {filter === opt.value && (
+              <motion.span
+                layoutId="card-list-filter-pill"
+                className="absolute inset-0 bg-surface-card rounded-lg shadow-sm"
+                transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+              />
+            )}
+            <span className={`relative z-10 ${
+              filter === opt.value
+                ? 'text-primary'
+                : 'text-text-secondary hover:text-text-primary'
+            }`}>
+              {opt.label}
+            </span>
+          </button>
+        ))}
       </div>
 
       <div className="relative mb-4">
@@ -82,19 +128,50 @@ export function CardListPage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, delay: Math.min(i * 0.03, 0.6) }}
-              className={`flex items-center p-4 bg-surface-card rounded-xl border border-border border-l-[3px] ${borderColor(card)} hover:border-primary/30 hover:shadow-sm transition-all`}
+              className={`bg-surface-card rounded-xl border border-border border-l-[3px] ${borderColor(card)} hover:border-primary/30 hover:shadow-sm transition-all ${card.type === 'verb' ? 'cursor-pointer' : ''}`}
+              onClick={() => {
+                if (card.type === 'verb') {
+                  setExpandedId(expandedId === card.id ? null : card.id);
+                }
+              }}
             >
-              <div className="flex items-center gap-3">
-                {card.type === 'word' && genderBadge(card.gender)}
-                {card.type === 'verb' && (
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600">verb</span>
-                )}
-                <div>
-                  <span className="font-medium text-text-primary">{card.german}</span>
-                  <span className="text-text-muted mx-2">&mdash;</span>
-                  <span className="text-text-secondary">{card.english}</span>
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-3">
+                  {card.type === 'word' && genderBadge(card.gender)}
+                  {card.type === 'verb' && (
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600">verb</span>
+                  )}
+                  <div>
+                    <span className="font-medium text-text-primary">{card.german}</span>
+                    <span className="text-text-muted mx-2">&mdash;</span>
+                    <span className="text-text-secondary">{card.english}</span>
+                  </div>
                 </div>
+                {card.type === 'verb' && (
+                  <svg
+                    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    className={`text-text-muted transition-transform ${expandedId === card.id ? 'rotate-180' : ''}`}
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                )}
               </div>
+              {card.type === 'verb' && card.conjugations && expandedId === card.id && (
+                <div className="px-4 pb-4 pt-0 border-t border-border">
+                  <table className="text-sm font-mono w-full max-w-xs mt-3">
+                    <tbody>
+                      {PRONOUN_LABELS.map(({ key, label }) => (
+                        <tr key={key} className="border-b border-border-light last:border-0">
+                          <td className="py-1.5 text-right text-text-muted font-medium w-24">{label}</td>
+                          <td className="py-1.5 px-4 text-text-primary font-semibold">
+                            {card.conjugations![key as keyof typeof card.conjugations]}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
